@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.newlife.meetup.domain.User;
 import com.newlife.meetup.service.IUserService;
+import com.newlife.meetup.util.ResponseUtil;
 
 @RestController
-@RequestMapping({"/sports-meetup/user", "/sports-meetup/user/v1.0"})
+@RequestMapping({"/sports-meetup/users", "/sports-meetup/users/v1.0"})
 public class UserController {
 	
 	@Autowired
@@ -36,18 +37,8 @@ public class UserController {
 	 */
 	//add User
 	@PostMapping("/addUser")
-	public String addUser(@RequestBody User user) {
+	public ResponseUtil addUser(@RequestBody User user) {
 		return this.userService.addUser(user);
-	}
-	
-	/**
-	 * check the user when a user tries to login
-	 * @param user
-	 * @return
-	 */
-	@RequestMapping("/checkUser")
-	public String checkUser(@RequestBody User user) {
-		return this.userService.checkUser(user);
 	}
 	
 }

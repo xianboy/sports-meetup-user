@@ -6,10 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import com.newlife.meetup.domain.PhoneNumber;
 import com.newlife.meetup.domain.User;
+import com.newlife.meetup.repository.PhoneNumberRepositery;
 import com.newlife.meetup.repository.UserRepository;
 import com.newlife.meetup.service.IUserService;
+import com.newlife.meetup.util.ResponseUtil;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -19,37 +23,61 @@ public class UserServiceImpl implements IUserService {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private PhoneNumberRepositery phoneNumberRepositery;
+	
+	@Autowired
+	private PhoneNumber number;
+	
+	@Autowired
+	private ResponseUtil responseUtil;
+	
 	//valid phoneNumber
+	/**
+	 * N means the number is used.
+	 * Y means the number is usable.
+	 */
 	@Override
-	public String checkUser(String phoneNumber) {
-		String result = "N";
+	public String checkPhoneNumber(String phoneNumber) {
+		String isUsable = "N";
 		try {
-			 List<User> users = this.userRepository.findUserByPhoneNumber(phoneNumber);
-			 if(users.size()>0) {
-				 result = "Y";
+			 number = this.phoneNumberRepositery.findPhoneNumberByNumber(phoneNumber);
+//			 List<User> users = this.userRepository.findUserByPhoneNumber(phoneNumber);
+			 if(number.getNumber().equals(phoneNumber)) {
+				 isUsable = "N";
+			 }else {
+				 isUsable = "Y";
 			 }
 		}catch (Exception e) {
 			LOGGER.debug("Some issue occurred while running method checkUser()");
-			e.getCause();
+			isUsable = "Y";
 		}
-		return result;
+		return isUsable;
 	}
 	
 	//addUser 
 	@Override
-	public String addUser(User user) {
-		String usable = checkUser(user.getPhoneNumber());
+	public ResponseUtil addUser(User user) {
+		Object result = null;
+		String isUsable = checkPhoneNumber(user.getPhoneNumber());
 		try {
-			if(!usable.equals("Y")) {
+			if(isUsable.equals("Y")) {
 				this.userRepository.save(user);
+				if(number==null) {
+					number = new PhoneNumber(user.getPhoneNumber());
+				}
+				this.phoneNumberRepositery.save(number);
+				responseUtil.setResponseCode("RS100");
+				responseUtil.setMessage("注册成功！");
+			}else{
+				responseUtil.setResponseCode("RE001");
+				responseUtil.setMessage("账户已经存在！");
 			}
 		}catch (Exception e) {
-			return "faild";
+			
 		}
-		
-		return "success";
+		return responseUtil;
 	}
-	
 
 	@Override
 	public String checkUser(User user) {
@@ -68,6 +96,18 @@ public class UserServiceImpl implements IUserService {
 		}else {
 			return null;
 		}
+	}
+
+	@Override
+	public String checkUser(String phoneNumber) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String checkPhoneNumber(User user) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

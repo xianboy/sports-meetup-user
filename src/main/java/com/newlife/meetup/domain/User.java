@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 @Entity
 public class User {
 	
@@ -11,6 +13,7 @@ public class User {
 	@GeneratedValue
 	private Long userId;
 	
+	@NotBlank(message="手机号不能为空") 
 	private String phoneNumber;
 	
 	private String verificationCode;
@@ -31,8 +34,6 @@ public class User {
 	public User() {
 		super();
 	}
-	
-
 
 	public Long getUserId() {
 		return userId;

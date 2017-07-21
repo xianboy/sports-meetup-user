@@ -55,6 +55,25 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
+		
+		<!-- the dependencies for sendding verification code by aliyun -->
+		<dependency>
+			<groupId>com.aliyun</groupId>
+		    <artifactId>aliyun-java-sdk-core</artifactId>
+    		<version>3.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+		    <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
+		    <version>1.0.0-SANPSHOT</version>
+		</dependency>
+		
+		<!-- hot deploy dependency -->
+		<dependency>  
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-devtools</artifactId>  
+            <optional>true</optional>  
+  </dependency>
 	</dependencies>
 
 	<build>
@@ -62,6 +81,10 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- setup hot deploy -->
+				<configuration>
+					<fork>true</fork>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
